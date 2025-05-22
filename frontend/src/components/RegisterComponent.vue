@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+ import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import axios from 'axios'
 import router from "@/router/index.js";
@@ -11,16 +11,22 @@ const email = ref('')
 const password = ref('')
 
 function registerUser() {
-  axios.post('http://localhost:8000/api/user', {
-    name: name.value,
-    email: email.value,
-    password: password.value,
-  }).then((response) => {
-    console.log(response.data);
-    // window.location.href('/')
-    router.push('/');
-  })
-  toast.success('Данные отправлены успешно')
+  axios.get('http://localhost:8000/sanctum/csrf-cookie').then(response => {
+    axios.post('http://localhost:8000/api/register', {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+    }).then((response) => {
+      console.log(response.data);
+      // window.location.href('/')
+      //router.push('/');
+    })
+    toast.success('Регистрация успешна')
+  });
+  // asdasdasdas
+  // asdasddas@mail.com
+  // 123123123
+
 }
 </script>
 
