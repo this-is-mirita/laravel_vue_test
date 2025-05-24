@@ -1,62 +1,97 @@
 <script setup>
-import { ref } from 'vue'
-import axios from 'axios'
+import {useUserStore} from "@/stores/useUserStore.js";
+import axios from "axios";
+import {onMounted, ref} from "vue";
 
-const user = ref(null)
+const store = useUserStore();
+const userName = store.user?.name ?? null;
+//console.log(store.user);
+const BASE_URL = 'http://localhost:8000';
+const fetchedArticles = ref([]);        // все посты
+const startPageHomeVue = ref(0);        // текущая страница 1 ? 0
+const allPageHomeVue = ref(null);      // последняя страница
 
-async function checkAuth() {
+const fetchArticlesFn = async () => {
     try {
-        const userStorage = JSON.parse(localStorage.getItem('user')).token
-        console.log(userStorage)
-        const response = await axios.get('http://localhost:8000/api/user', {
+        const token =JSON.parse(localStorage.getItem('user')).token
+        const response = await axios.get(`${BASE_URL}/api/article?page=${startPageHomeVue.value}`, {
             headers: {
-                'Authorization': `Bearer ${userStorage}`
-            }
-        })
-        user.value = response.data
-        alert('Вы авторизованы как: ' + response.data.name)
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = response.data.article;
+        fetchedArticles.value = data.data;
+        startPageHomeVue.value = data.current_page;
+        allPageHomeVue.value = data.last_page;
     } catch (error) {
-        user.value = null
-        alert('Ошибка авторизации!')
+        console.error('Ошибка при получении данных:', error.message);
+        throw error;
     }
+};
+
+const nextPage = async (page) => {
+    startPageHomeVue.value = page;
+    console.log(startPageHomeVue.value);
+    await fetchArticlesFn();
+};
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        return decodeURIComponent(parts.pop().split(';').shift());
+    }
+    return null;
 }
+
+onMounted(fetchArticlesFn);
 </script>
 <template>
     <div class="home-page">
-        <div>
-            <button @click="checkAuth">Проверить авторизацию</button>
-            <div v-if="user">{{ user.name }} (авторизован)</div>
-            <div v-else>Не авторизован</div>
-        </div>
-        <h1 class="main-title">Добро пожаловать на главную страницу!</h1>
+        <h1 class="main-title text-center">{{
+                userName ? `${userName}, Добро пожаловать на главную страницу!` : 'Добро пожаловать!'
+            }}</h1>
 
-        <div class="articles-block">
-            <h2>Список статей (пока пусто)</h2>
-        </div>
+        <div class="container">
+            <div class="row row-cols-md-3  cards-wrapper ">
+                <div v-for="article in fetchedArticles" :key="article.id" class="mt-3">
+                    <div class="col h-100">
+                        <div class="card info-card card-hover">
+                            <div class="card-body">
+                                <img class="img-fluid" :src="article.preview_image" alt="image">
+                                <h3 class="card-title">{{ article.title }}</h3>
+                                <p class="card-text">{{ article.text }}</p>
+                                <p class="card-text">Дата создания : {{ article.created_at }}</p>
+                                <p class="card-text">owner id : {{ article.owner_id }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-center align-items-center">
+                <ul class="pagination">
+                    <li
+                        v-for="page in allPageHomeVue"
+                        :key="page"
+                        class="page-item"
+                        :class="{ active: page === startPageHomeVue }"
+                    >
+                        <a class="page-link" href="#" @click.prevent="nextPage(page)">{{ page }}</a>
+                    </li>
+                </ul>
+            </div>
 
-        <div class="cards-wrapper">
-            <div class="info-card">
-                <h3>Быстро</h3>
-                <p>Наш сервис работает молниеносно — никакого ожидания!</p>
-            </div>
-            <div class="info-card">
-                <h3>Просто</h3>
-                <p>Удобный и понятный интерфейс для каждого пользователя.</p>
-            </div>
-            <div class="info-card">
-                <h3>Надёжно</h3>
-                <p>Ваши данные под надёжной защитой.</p>
-            </div>
         </div>
     </div>
 </template>
 
+
 <style scoped lang="scss">
 .home-page {
     padding: 40px 20px;
-    background: #f5f7fa;
     min-height: 100vh;
-    text-align: center;
 }
 
 .main-title {
@@ -65,48 +100,70 @@ async function checkAuth() {
     color: #2c3e50;
 }
 
-.articles-block {
-    background: #fff;
-    padding: 25px;
-    margin: 0 auto 40px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    max-width: 700px;
+.card-hover {
+    transition: transform 0.3s ease-in-out;
 
-    h2 {
-        margin: 0;
-        color: #34495e;
+    &:hover {
+        transform: scale(1.05); /* увеличение размера при наведении */
     }
 }
 
-.cards-wrapper {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
 .info-card {
-    background: #fff;
-    padding: 20px;
-    width: 250px;
+    background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease;
-    text-align: left;
+    height: 100%;
 
-    h3 {
+    .card-title {
         color: #42b983;
         margin-bottom: 10px;
     }
 
-    p {
+    .card-text {
         color: #555;
         font-size: 15px;
     }
+}
 
-    &:hover {
-        transform: translateY(-5px);
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    gap: 8px;
+
+    .page-item {
+        list-style: none;
+
+        .page-link {
+            display: block;
+            padding: 8px 14px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            color: #42b983;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+
+            &:hover {
+                background-color: #42b983;
+                color: #fff;
+            }
+
+            &:focus {
+                box-shadow: none !important;
+                outline: none !important;
+            }
+        }
+
+        &.active .page-link {
+            background-color: #42b983;
+            color: #fff;
+            font-weight: bold;
+        }
+
     }
 }
+
 </style>
+
+

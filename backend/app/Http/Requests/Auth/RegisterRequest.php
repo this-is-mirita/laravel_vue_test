@@ -36,6 +36,10 @@ class RegisterRequest extends FormRequest
             'email.string' => 'емаил должен быть строкой ',
             'email.email' => 'почта должна быть в формате xxxx@xxxx.xx ',
             'email.unique' => 'пользователь с таким емаил уже существует',
+
+            'password.required' => 'обязательно для заполнения ',
+            'password.string' => 'пароль должен быть строкой ',
+
         ];
     }
 }

@@ -1,8 +1,9 @@
 <script setup>
-import { useToast } from "vue-toastification";
-import { useUserStore } from "@/stores/useUserStore.js";
+import {useToast} from "vue-toastification";
+import {useUserStore} from "@/stores/useUserStore.js";
 import axios from "axios";
 import router from "@/router/index.js";
+import {computed} from "vue";
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -10,15 +11,13 @@ axios.defaults.withCredentials = true;
 
 async function logout() {
     try {
-        // 1. Сначала получаем свежий CSRF-токен
         await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
             withCredentials: true
         });
 
-        // 2. Получаем XSRF-токен из куков
         const xsrfToken = getCookie('XSRF-TOKEN');
 
-        // 3. Отправляем запрос на логаут с нужными заголовками
+        // запрос на логаут
         await axios.post('http://localhost:8000/api/logout', {}, {
             headers: {
                 'Accept': 'application/json',
@@ -28,10 +27,8 @@ async function logout() {
             withCredentials: true
         });
 
-        // 4. Очищаем хранилище
+        // pinia store из локал сторедж очистка
         userStore.clearUser();
-
-        // 5. Перенаправляем
         router.push('/login');
     } catch (error) {
         console.error('Ошибка при выходе:', error);
@@ -48,22 +45,46 @@ function getCookie(name) {
     }
     return null;
 }
+
+// if else header
+const isLoggedIn = computed(() => userStore.isAuthenticated);
+console.log(isLoggedIn.value);
+const windowLocation = router.currentRoute.value.path;
+console.log(windowLocation);
+
+function isActive(windowLocation) {
+    return 'active';
+}
 </script>
 
 <template>
-    <header class="header">
-        <nav  class="nav">
-            <router-link to="/" class="nav-link">profile</router-link>
-            <a href="#" @click.prevent="logout" class="nav-link">Выход</a>
-        </nav>
-        <nav class="nav">
-            <router-link to="/" class="nav-link">Главная</router-link>
-            <router-link to="/register" class="nav-link">Регистрация</router-link>
-            <router-link to="/login" class="nav-link">Вход</router-link>
+    <header class="header bg-white shadow-sm mb-4 py-3 rounded-b-lg">
+        <nav class="navbar navbar-expand-md container-fluid p-0">
+            <ul class="navbar-nav mx-auto fs-5 fw-medium">
+                <li class="nav-item ms-3">
+                    <router-link to="/" :class="{ 'nav-link': isActive('/') }">Главная</router-link>
+                </li>
+                <li class="nav-item ms-3" v-if="!isLoggedIn">
+                    <router-link to="/register" :class="{ 'nav-link': isActive('/register') }">
+                        Регистрация
+                    </router-link>
+                </li>
+                <li class="nav-item ms-3" v-if="!isLoggedIn">
+                    <router-link to="/login" :class="{ 'nav-link': isActive('/login') } ">Вход
+                    </router-link>
+                </li>
+                <li class="nav-item ms-3" v-if="isLoggedIn">
+                    <router-link to="/user" :class="{ 'nav-link': isActive('/user') }">Личный
+                        кабинет
+                    </router-link>
+                </li>
+                <li class="nav-item ms-3" v-if="isLoggedIn">
+                    <a href="#" @click.prevent="logout" class="nav-link">Выход</a>
+                </li>
+            </ul>
         </nav>
     </header>
 </template>
-
 
 
 <style scoped lang="scss">

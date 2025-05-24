@@ -1,30 +1,29 @@
 <?php
 
-use App\Http\Controllers\Auth\CheckController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+use App\Http\Controllers\User\IndexController as UserIndexController;
+use App\Http\Controllers\Articles\IndexController as ArticlesIndexController;
+use App\Http\Controllers\Articles\ShowController as ArticleShowController;
+use App\Http\Controllers\Articles\CreateController as ArticleCreateController;
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::get('/profile', [CheckController::class, 'profile'])->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', [UserIndexController::class, 'index']);
+});
 
-//Route::middleware(['web', 'auth'])
-//    ->namespace('Dashboard')
-//    ->prefix('dashboard')->as('dashboard.')
-//    ->group(function () {
-//        Route::get('line', [ChartController::class, 'line'])
-//            ->name('line');
-//
+Route::post('/article/create', [ArticleCreateController::class, 'create']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/article', [ArticlesIndexController::class, 'index']);
+    Route::get('/article/', [ArticleShowController::class, 'show']);
+
+});
+
 
 
 

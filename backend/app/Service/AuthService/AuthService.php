@@ -18,9 +18,6 @@ class AuthService
 
         return $user->createToken('auth_token', ['разрешение_на_просмотр'], now()->addWeek())->plainTextToken;
     }
-    public function logout(){
-
-    }
     public function register(array $data){
         $user = User::create([
             'name'     => $data['name'],

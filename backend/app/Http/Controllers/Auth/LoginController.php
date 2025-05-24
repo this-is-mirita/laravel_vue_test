@@ -18,6 +18,14 @@ class LoginController extends BaseController
         $data = $request->validated();
         // baseContr для сервиса
         $token = $this->service->login($data);
+
+        // пустой пароль и не ставит токен в ls и пропускат
+        if (!$token) {
+            return response()->json([
+                'error' => 'error'
+            ], 401);
+        }
+
         return response()->json([
             'token' => $token,
             'user' => User::where('email', $data['email'])->first()->toArray()
