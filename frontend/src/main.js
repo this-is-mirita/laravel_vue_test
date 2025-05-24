@@ -1,16 +1,21 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import Toast from 'vue-toastification'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate' // в ls соранить
+import Toast from 'vue-toastification' // красивая анимация
 import 'vue-toastification/dist/index.css'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
-const app = createApp(App)
 
-app.use(createPinia())
+const app = createApp(App)
+const pinia = createPinia()
+
+pinia.use(piniaPluginPersistedstate)
+
+app.use(pinia) // пиния для соххранения данных в состоянии
 app.use(router)
 app.use(Toast)
+
 app.mount('#app')
-axios.defaults.baseURL = 'http://localhost:8000';
+
+axios.defaults.baseURL = 'http://localhost:8000'

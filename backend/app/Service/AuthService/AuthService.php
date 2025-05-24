@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthService
 {
 
-    public function login(array $data): string|null
+    public function login(array $data)
     {
         $user = User::where('email', $data['email'])->first();
 

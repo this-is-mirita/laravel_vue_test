@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\CheckController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -19,8 +18,13 @@ Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sa
 
 Route::get('/profile', [CheckController::class, 'profile'])->middleware('auth:sanctum');
 
-
-
+//Route::middleware(['web', 'auth'])
+//    ->namespace('Dashboard')
+//    ->prefix('dashboard')->as('dashboard.')
+//    ->group(function () {
+//        Route::get('line', [ChartController::class, 'line'])
+//            ->name('line');
+//
 
 
 
