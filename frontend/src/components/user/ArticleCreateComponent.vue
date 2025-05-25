@@ -1,62 +1,72 @@
 <script setup>
-import { ref } from 'vue'
-import axios from 'axios'
+import { ref } from 'vue';
+import axios from 'axios';
+import router from "@/router/index.js";
 
-const title = ref('')
-const text = ref('')
-const preview_image = ref(null)
+
+
+const title = ref('');
+const text = ref('');
+const previewImage = ref(null); // переименовал переменную для единообразия
 
 async function createPost() {
-
     try {
-        const user_id = JSON.parse(localStorage.getItem('user'))?.id || ''
-        const token = JSON.parse(localStorage.getItem('user'))?.token || ''
-        // 2. Готовим данные
-        const formData = new FormData()
-        formData.append('title', title.value)
+        const userId = JSON.parse(localStorage.getItem('user'))?.id || '';
+        const token = JSON.parse(localStorage.getItem('user'))?.token || ''; // добавляем токен обратно
 
-        formData.append('text', text.value)
-        formData.append('user_id', user_id)
-
-        if (preview_image.value) {
-            formData.append('preview_image', preview_image.value)
+        if (!title.value) {
+            alert('Введите текст!');
+            return;
         }
-        const BASE_URL = 'http://localhost:8000'
+        if (!text.value) {
+            alert('Введите текст!');
+            return;
+        }
+        if (!previewImage.value) {
+            alert('Выберите превью-изображение!');
+            return;
+        }
 
-        await axios.post(`${BASE_URL}/api/article/create`, formData, {
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'multipart/form-data',
-            },
-        })
+        const formData = new FormData();
+        formData.append('title', title.value);
+        formData.append('text', text.value);
+        formData.append('user_id', userId);
+        formData.append('preview_image', previewImage.value);
 
+        const BASE_URL = 'http://localhost:8000';
 
+        await axios.post(
+            `${BASE_URL}/api/article/create`,
+            formData,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`, // включаем токен в запрос
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+        );
+
+        alert('Статья успешно создана!');
+        router.push('/user/article/')
 
     } catch (error) {
-        console.error('Ошибка создания статьи:', {
-            status: error.response?.status,
-            data: error.response?.data,
-            message: error.message
-        })
+        console.error('Ошибка при создании поста:', error.response.data.message);
+        alert(`Ошибка: ${error.response.data.message}`);
     }
-
 }
 
-function preview_image_fn(e) {
-    const file = e.target.files[0]
-    preview_image.value = file
-    const previewUrl = URL.createObjectURL(file)
-    console.log('Временная ссылка:', previewUrl)
+function handlePreviewImageChange(event) {
+    const file = event.target.files[0];
+    previewImage.value = file;
+    const previewUrl = URL.createObjectURL(file);
 }
 </script>
-
-
 
 <template>
     <div class="container mt-5">
         <div class="row">
             <div class="col-2 mt-4">
-                <ul class="d-flex gap-3 my-3 p-0" style="list-style:none;">
+                <ul class="d-flex gap-3 my-3 p-0" style="list-style: none;">
                     <router-link to="/user" class="nav-link">Назад</router-link>
                 </ul>
             </div>
@@ -64,28 +74,22 @@ function preview_image_fn(e) {
                 <h2 class="text-success mb-4">Создание статьи</h2>
                 <div class="mb-3">
                     <label for="title" class="form-label text-success">Заголовок</label>
-                    <input type="text" v-model="title" class="form-control border-success"
-                           id="title">
+                    <input type="text" v-model="title" class="form-control border-success" id="title">
                 </div>
 
                 <div class="mb-3">
                     <label for="text" class="form-label text-success">Текст статьи</label>
-                    <textarea v-model="text" class="form-control border-success" id="text"
-                              rows="5"></textarea>
+                    <textarea v-model="text" class="form-control border-success" id="text" rows="5"></textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label for="preview_image" class="form-label text-success">Превью
-                        изображение</label>
-                    <input type="file" @change="preview_image_fn" class="form-control border-success" id="preview_image"
-                           >
+                    <label for="preview-image" class="form-label text-success">Превью изображение</label>
+                    <input type="file" @change="handlePreviewImageChange" class="form-control border-success" id="preview-image">
                 </div>
 
                 <button @click.prevent="createPost()" type="submit" class="btn btn-success">
                     Создать
                 </button>
-
-
             </div>
         </div>
     </div>

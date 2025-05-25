@@ -1,9 +1,10 @@
 <script setup>
     import axios from "axios";
     import {onMounted, ref} from "vue";
+    import ShowPostComponent from "@/components/user/profile/ShowPostComponent.vue";
     const articleUser = ref()
+    const BASE_URL = 'http://localhost:8000';
     onMounted( async () =>{
-        const BASE_URL = 'http://localhost:8000';
         //  CSRF cookie
         const token =JSON.parse(localStorage.getItem('user')).token
         const response = await axios.get(`${BASE_URL}/api/user/article/`, {
@@ -22,39 +23,13 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-2 mt-4">
+            <div class="col-1 mt-4">
                 <ul class="d-flex gap-3 my-3 p-0" style="list-style:none;">
                     <router-link to="/user" class="nav-link">Назад</router-link>
                 </ul>
             </div>
-            <div class="col-10">
-                <div class="mt-4">
-                    <h3 class="text-success mb-4">Мои посты</h3>
-
-                    <div class="accordion" id="postsAccordion">
-                        <div class="accordion-item mt-3" v-for="article in articleUser" :key="article.id">
-                            <h2 class="accordion-header" :id="'heading' + article.id">
-                                <button class="accordion-button collapsed" type="button"
-                                        data-bs-toggle="collapse"
-                                        :data-bs-target="'#collapse' + article.id"
-                                        aria-expanded="false"
-                                        :aria-controls="'collapse' + article.id">
-                                    {{ article.title }}
-                                </button>
-                            </h2>
-                            <div :id="'collapse' + article.id"
-                                 class="accordion-collapse collapse"
-                                 :aria-labelledby="'heading' + article.id"
-                                 data-bs-parent="#postsAccordion">
-                                <div class="accordion-body">
-                                    <p><strong>Текст:</strong> {{ article.text }}</p>
-                                    <p><strong>Дата:</strong> {{ formatDate(article.created_at) }}</p>
-                                    <p><strong>ID автора:</strong> {{ article.owner_id }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-11">
+                <show-post-component :articles="articleUser" />
             </div>
         </div>
     </div>
@@ -63,6 +38,10 @@
 
 
 <style scoped>
+.img-fluid{
+    width: 300px !important;
+    height: 200px !important;
+}
 .accordion-button {
     background-color: #e6f9eb; /* светло-зеленый */
     color: #155724;

@@ -1,17 +1,20 @@
 <script setup>
 import {useUserStore} from "@/stores/useUserStore.js";
 import axios from "axios";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 
 const store = useUserStore();
 const userName = store.user?.name ?? null;
+
+
 const BASE_URL = 'http://localhost:8000';
 const fetchedArticles = ref([]);        // все посты
 const startPageHomeVue = ref(0);        // текущая страница 1 ? 0
 const allPageHomeVue = ref(null);      // последняя страница
-
+const isLoading = ref(true)
 const fetchArticlesFn = async () => {
     try {
+        isLoading.value = true;
         const token =JSON.parse(localStorage.getItem('user')).token
         const response = await axios.get(`${BASE_URL}/api/article?page=${startPageHomeVue.value}`, {
             headers: {
@@ -23,10 +26,12 @@ const fetchArticlesFn = async () => {
         fetchedArticles.value = data.data;
         startPageHomeVue.value = data.current_page;
         allPageHomeVue.value = data.last_page;
-        console.log(data);
+        //console.log(data);
     } catch (error) {
         console.error('Ошибка при получении данных:', error);
         throw error;
+    } finally {
+        isLoading.value = false;
     }
 };
 
@@ -38,6 +43,7 @@ const nextPage = async (page) => {
 
 
 onMounted(fetchArticlesFn);
+
 </script>
 <template>
     <div class="home-page">
@@ -45,17 +51,20 @@ onMounted(fetchArticlesFn);
                 userName ? `${userName}, Добро пожаловать на главную страницу!` : 'Добро пожаловать!'
             }}</h1>
 
-        <div class="container">
+        <div class="container" v-if="!isLoading">
             <div class="row row-cols-md-3  cards-wrapper ">
                 <div v-for="article in fetchedArticles" :key="article.id" class="mt-3">
                     <div class="col h-100">
                         <div class="card info-card card-hover">
                             <div class="card-body">
-                                <img class="img-fluid" :src="article.preview_image" alt="image">
+                                <img class="img-fluid":src="`${BASE_URL}/storage/${article.preview_image}`"alt="image" />
                                 <h3 class="card-title">{{ article.title }}</h3>
                                 <p class="card-text">{{ article.text }}</p>
                                 <p class="card-text">Дата создания : {{ article.created_at }}</p>
                                 <p class="card-text">owner id : {{ article.owner_id }}</p>
+                                <router-link :to="{ name: 'ArticleSinglePageView', params: { id: article.id } }" class="text-success">
+                                    Подробнее
+                                </router-link>
                             </div>
                         </div>
                     </div>
@@ -73,7 +82,9 @@ onMounted(fetchArticlesFn);
                     </li>
                 </ul>
             </div>
-
+        </div>
+        <div v-else class="container d-flex justify-content-center align-items-center">
+            загрузка...
         </div>
     </div>
 </template>

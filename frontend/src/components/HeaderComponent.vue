@@ -31,7 +31,7 @@ async function logout() {
         userStore.clearUser();
         router.push('/login');
     } catch (error) {
-        console.error('Ошибка при выходе:', error);
+        //console.error('Ошибка при выходе:', error);
         toast.error('Ошибка при выходе');
     }
 }
@@ -48,9 +48,9 @@ function getCookie(name) {
 
 // if else header
 const isLoggedIn = computed(() => userStore.isAuthenticated);
-console.log(isLoggedIn.value);
+//console.log(isLoggedIn.value);
 const windowLocation = router.currentRoute.value.path;
-console.log(windowLocation);
+//console.log(windowLocation);
 
 function isActive(windowLocation) {
     return 'active';

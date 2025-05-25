@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\Articles;
 
 use Illuminate\Http\Request;
-class CreateArticleController extends BaseArticleController
+class EditController extends BaseArticleController
 {
     public function index(Request $request)
     {
         $data = $request->all();
-        return  response()->json([$data]);
+        dd($data);
+        //$result = $this->service->store($data, $request);
 
-//        $result = $this->service->store($data, $request);
-//
-//        return response()->json(['message' => 'OK', 'result' => $result]);
+        return response()->json(['message' => 'OK', 'result' => $result]);
     }
 }
 //lluminate\Http\Request {#45 // app\Http\Controllers\Articles\CreateController.php:13

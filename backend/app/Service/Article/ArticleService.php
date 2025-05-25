@@ -4,6 +4,7 @@ namespace App\Service\Article;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleService
 {
@@ -15,8 +16,9 @@ class ArticleService
                 'title' => $data['title'],
                 'text' => $data['text'],
                 'preview_image' => $path,
-                'owner_id' => $request->user()->id,
+                'owner_id' => $data['user_id'],
             ]);
+            return true;
         }
         return null;
     }

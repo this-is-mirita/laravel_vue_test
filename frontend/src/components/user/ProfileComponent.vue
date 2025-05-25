@@ -1,10 +1,33 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from "axios";
+import {useUserStore} from "@/stores/useUserStore.js";
+const BASE_URL = 'http://localhost:8000';
+const userStore = useUserStore();
+
+// onMounted(async () => {
+//     const token = localStorage.getItem('token') || '';
+//     const user_id = userStore.user.id;
+//
+//     try {
+//         const response = await axios.get(`${BASE_URL}/users/${user_id}`, {
+//             headers: {
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         });
+//
+//         userInfo.value = response.data;
+//         console.log(userInfo.value);
+//     } catch (err) {
+//         console.error(err);
+//     }
+// })
+
 
 // Пример данных (замени на реальные, если получаешь с API)
 const user = ref({
-    name: 'Mirita',
-    email: 'mirita@example.com',
+    name: '123',
+    email: '123@example.com',
     password: '123',
     created_at: '2025-01-15',
 })
