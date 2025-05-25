@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Articles;
 
 use Illuminate\Http\Request;
-class CreateController extends BaseArticleController
+class CreateArticleController extends BaseArticleController
 {
     public function index(Request $request)
     {

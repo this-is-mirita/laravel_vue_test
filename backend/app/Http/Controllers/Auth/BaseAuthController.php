@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Service\AuthService\AuthService;
+use App\Service\Auth\AuthService;
 
-class BaseController extends Controller
+class BaseAuthController extends Controller
 {
     public $service;
     public function __construct(AuthService $service){

@@ -10,7 +10,7 @@ use Nette\Schema\ValidationException;
 
 class LogoutController extends Controller
 {
-    public function logout(Request $request){
+    public function index(Request $request){
         //dd($request->user()->currentAccessToken());
 
         $request->user()->currentAccessToken()->delete();

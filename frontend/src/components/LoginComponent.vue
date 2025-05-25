@@ -41,14 +41,15 @@ async function loginUser() {
             }
         );
     } catch (error) {
-        const errEmail = error.response.data.errors.email
-        const errPassword = error.response.data.errors.password
-        toast.error(
-            `email : ${ errEmail } `,
-        )
-        toast.error(
-            `пароль : ${ errPassword } `,
-        )
+        // const errEmail = error.response.data.errors.email
+        // const errPassword = error.response.data.errors.password
+        // toast.error(
+        //     `email : ${ errEmail } `,
+        // )
+        // toast.error(
+        //     `пароль : ${ errPassword } `,
+        // )
+        console.log(error);
     }
 }
 

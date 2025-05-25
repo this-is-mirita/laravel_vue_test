@@ -6,7 +6,7 @@
         const BASE_URL = 'http://localhost:8000';
         //  CSRF cookie
         const token =JSON.parse(localStorage.getItem('user')).token
-        const response = await axios.get(`${BASE_URL}/api/article`, {
+        const response = await axios.get(`${BASE_URL}/api/user/article/`, {
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${token}`,

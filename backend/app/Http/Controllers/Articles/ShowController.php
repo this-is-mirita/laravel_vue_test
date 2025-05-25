@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 
 class ShowController extends Controller
 {
-    public function show(Request $request)
+    public function index(Request $request)
     {
         $user_id = $request->user()->id;
         //dd($user_id);

@@ -1,18 +1,57 @@
 <script setup>
 import { ref } from 'vue'
-import axios from "axios"
+import axios from 'axios'
 
 const title = ref('')
 const text = ref('')
-const image = ref()
-const BASE_URL = 'http://localhost:8000'
+const preview_image = ref(null)
 
-function handleImage(e) {
-    image.value = e.target.files[0]
+async function createPost() {
+
+    try {
+        const user_id = JSON.parse(localStorage.getItem('user'))?.id || ''
+        const token = JSON.parse(localStorage.getItem('user'))?.token || ''
+        // 2. Готовим данные
+        const formData = new FormData()
+        formData.append('title', title.value)
+
+        formData.append('text', text.value)
+        formData.append('user_id', user_id)
+
+        if (preview_image.value) {
+            formData.append('preview_image', preview_image.value)
+        }
+        const BASE_URL = 'http://localhost:8000'
+
+        await axios.post(`${BASE_URL}/api/article/create`, formData, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+
+
+
+    } catch (error) {
+        console.error('Ошибка создания статьи:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            message: error.message
+        })
+    }
+
 }
 
-
+function preview_image_fn(e) {
+    const file = e.target.files[0]
+    preview_image.value = file
+    const previewUrl = URL.createObjectURL(file)
+    console.log('Временная ссылка:', previewUrl)
+}
 </script>
+
+
+
 <template>
     <div class="container mt-5">
         <div class="row">
@@ -23,30 +62,30 @@ function handleImage(e) {
             </div>
             <div class="col-9">
                 <h2 class="text-success mb-4">Создание статьи</h2>
+                <div class="mb-3">
+                    <label for="title" class="form-label text-success">Заголовок</label>
+                    <input type="text" v-model="title" class="form-control border-success"
+                           id="title">
+                </div>
 
-                <form @submit.prevent="createPost" enctype="multipart/form-data"
-                      class="bg-light p-4 rounded shadow-sm border border-success">
-                    <div class="mb-3">
-                        <label for="title" class="form-label text-success">Заголовок</label>
-                        <input type="text" v-model="title" class="form-control border-success"
-                               id="title">
-                    </div>
+                <div class="mb-3">
+                    <label for="text" class="form-label text-success">Текст статьи</label>
+                    <textarea v-model="text" class="form-control border-success" id="text"
+                              rows="5"></textarea>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="text" class="form-label text-success">Текст статьи</label>
-                        <textarea v-model="text" class="form-control border-success" id="text"
-                                  rows="5"></textarea>
-                    </div>
+                <div class="mb-3">
+                    <label for="preview_image" class="form-label text-success">Превью
+                        изображение</label>
+                    <input type="file" @change="preview_image_fn" class="form-control border-success" id="preview_image"
+                           >
+                </div>
 
-                    <div class="mb-3">
-                        <label for="image" class="form-label text-success">Превью
-                            изображение</label>
-                        <input type="file" class="form-control border-success" id="image"
-                               accept="image/*" @change="handleImage">
-                    </div>
+                <button @click.prevent="createPost()" type="submit" class="btn btn-success">
+                    Создать
+                </button>
 
-                    <button type="submit" class="btn btn-success">Создать</button>
-                </form>
+
             </div>
         </div>
     </div>

@@ -5,7 +5,6 @@ import {onMounted, ref} from "vue";
 
 const store = useUserStore();
 const userName = store.user?.name ?? null;
-//console.log(store.user);
 const BASE_URL = 'http://localhost:8000';
 const fetchedArticles = ref([]);        // все посты
 const startPageHomeVue = ref(0);        // текущая страница 1 ? 0
@@ -19,14 +18,14 @@ const fetchArticlesFn = async () => {
                 Accept: 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-        });
-
+        })
         const data = response.data.article;
         fetchedArticles.value = data.data;
         startPageHomeVue.value = data.current_page;
         allPageHomeVue.value = data.last_page;
+        console.log(data);
     } catch (error) {
-        console.error('Ошибка при получении данных:', error.message);
+        console.error('Ошибка при получении данных:', error);
         throw error;
     }
 };
@@ -37,14 +36,6 @@ const nextPage = async (page) => {
     await fetchArticlesFn();
 };
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-        return decodeURIComponent(parts.pop().split(';').shift());
-    }
-    return null;
-}
 
 onMounted(fetchArticlesFn);
 </script>

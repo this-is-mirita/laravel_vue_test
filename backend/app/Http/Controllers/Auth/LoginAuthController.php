@@ -10,16 +10,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Nette\Schema\ValidationException;
 
-class LoginController extends BaseController
+class LoginAuthController extends BaseAuthController
 {
-    public function login(LoginRequest $request){
+    public function index(LoginRequest $request){
         // по реквесту с правилами и меседж
-
         $data = $request->validated();
         // baseContr для сервиса
         $token = $this->service->login($data);
 
-        // пустой пароль и не ставит токен в ls и пропускат
+        // пустой пароль и не ставит токен в ls и пропускаet
         if (!$token) {
             return response()->json([
                 'error' => 'error'

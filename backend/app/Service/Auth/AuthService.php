@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Service\AuthService;
+namespace App\Service\Auth;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-
     public function login(array $data)
     {
         $user = User::where('email', $data['email'])->first();

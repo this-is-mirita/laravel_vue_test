@@ -1,28 +1,32 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Articles\CreateController;
+use App\Http\Controllers\Auth\LoginAuthController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\RegisterAuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\User\IndexController as UserIndexController;
-use App\Http\Controllers\Articles\IndexController as ArticlesIndexController;
-use App\Http\Controllers\Articles\ShowController as ArticleShowController;
-use App\Http\Controllers\Articles\CreateController as ArticleCreateController;
+use App\Http\Controllers\Articles\IndexController;
+use App\Http\Controllers\Articles\ShowController ;
+use App\Http\Controllers\Articles\CreateArticleController;
+use App\Http\Controllers\Articles\StoreController ;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/register', [RegisterController::class, 'register']);
-Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/login', [LoginAuthController::class, 'index']);
+Route::post('/register', [RegisterAuthController::class, 'index']);
+Route::post('/logout', [LogoutController::class, 'index'])->middleware('auth:sanctum');
+
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', [UserIndexController::class, 'index']);
+    Route::get('/article', [IndexController::class, 'index']);
+    Route::get('/user/article/', [ShowController::class, 'index']);
+    Route::post('/article/', [StoreController::class, 'index']);
 });
+//Route::post('/article/create', [CreateArticleController::class, 'index'])
+//    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
+Route::post('/article/create', [CreateController::class, 'index'])
+    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
 
-Route::post('/article/create', [ArticleCreateController::class, 'create']);
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/article', [ArticlesIndexController::class, 'index']);
-    Route::get('/article/', [ArticleShowController::class, 'show']);
 
-});
 
 
 
