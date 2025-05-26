@@ -2,16 +2,28 @@
 
 namespace App\Http\Controllers\Articles;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
+
 class EditController extends BaseArticleController
 {
-    public function index(Request $request)
+    public function index(Request $request, $id)
     {
-        $data = $request->all();
-        dd($data);
-        //$result = $this->service->store($data, $request);
+        // на вынос
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'text' => 'required|string',
+            'preview_image' => 'nullable|string',
+        ]);
+        // на вынос
+        $article = Article::findOrFail($id);
+        // Обновляем данные
 
-        return response()->json(['message' => 'OK', 'result' => $result]);
+        $article->update($data);
+        // один ретурн
+        return response()->json([
+            'success' => true,
+        ], 200);
     }
 }
 //lluminate\Http\Request {#45 // app\Http\Controllers\Articles\CreateController.php:13

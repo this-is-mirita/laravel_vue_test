@@ -15,20 +15,25 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::post('/login', [LoginAuthController::class, 'index']);
 Route::post('/register', [RegisterAuthController::class, 'index']);
-Route::post('/logout', [LogoutController::class, 'index'])->middleware('auth:sanctum');
-
-
-Route::get('/article', [IndexController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/logout', [LogoutController::class, 'index'])
+    ->middleware('auth:sanctum');
+Route::get('/article', [IndexController::class, 'index'])
+    ->middleware('auth:sanctum');
 Route::get('/article/{id}', function (string $id) {
     return response()->json([
         'id' => $id,
         'page' => Article::find($id)
     ]);
 });
-Route::get('/user/article/', [ShowController::class, 'index'])->middleware('auth:sanctum');
-Route::post('/article/', [StoreController::class, 'index'])->middleware('auth:sanctum');
-Route::post('/article/create', [CreateController::class, 'index'])->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
-Route::post('/article/edit', [EditController::class, 'index'])->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
+Route::get('/user/article/', [ShowController::class, 'index'])
+    ->middleware('auth:sanctum');
+Route::post('/article/', [StoreController::class, 'index'])
+    ->middleware('auth:sanctum');
+Route::post('/article/create', [CreateController::class, 'index'])
+    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
+Route::post('/article/edit/{id}', [EditController::class, 'index'])
+    ->where('id', '[0-9]+')
+    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
 
 
 
