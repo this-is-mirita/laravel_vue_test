@@ -1,9 +1,9 @@
 <script setup>
 import axios from "axios";
-import {useRoute} from "vue-router"; // Подключаем useRoute
+import {useRoute} from "vue-router"; //  useRoute
 import {onMounted, ref} from "vue";
 
-const route = useRoute(); // Получаем текущий маршрут
+const route = useRoute(); //  текущий маршрут
 const page_id = route.params.id;
 const page = ref({}); // Референс для хранения данных статьи
 

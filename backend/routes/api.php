@@ -34,22 +34,6 @@ Route::post('/article/create', [CreateController::class, 'index'])
 Route::post('/article/edit/{id}', [EditController::class, 'index'])
     ->where('id', '[0-9]+')
     ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //Route::middleware('auth:sanctum')->group(function () {
 //    //Route::get('/get', GetController::class);
 //

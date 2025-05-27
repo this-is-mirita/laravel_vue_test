@@ -28,7 +28,7 @@ async function registerUser() {
             , {
                 headers: {
                     accept: 'application/json',
-                    'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'), // именно 'XSRF-TOKEN', без 'X-' в имени куки
+                    'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
                 },
                 withCredentials: true
             }).then(response => {

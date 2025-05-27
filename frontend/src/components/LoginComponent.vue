@@ -17,7 +17,7 @@ const BASE_URL = 'http://localhost:8000';
 async function loginUser() {
     const userStore = useUserStore() // получили методы
     try {
-        //  CSRF cookie
+        //  CSRF
         await axios.get(`${BASE_URL}/sanctum/csrf-cookie`, {withCredentials: true});
         //  логин
         const response = await axios.post(`${BASE_URL}/api/login`,

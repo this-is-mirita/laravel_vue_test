@@ -36,7 +36,7 @@ async function logout() {
     }
 }
 
-// Функция для получения куки (оставьте как есть)
+// получения куки
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -46,7 +46,6 @@ function getCookie(name) {
     return null;
 }
 
-// if else header
 const isLoggedIn = computed(() => userStore.isAuthenticated);
 //console.log(isLoggedIn.value);
 const windowLocation = router.currentRoute.value.path;

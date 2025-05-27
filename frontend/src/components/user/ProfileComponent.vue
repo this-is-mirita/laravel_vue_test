@@ -23,8 +23,6 @@ const userStore = useUserStore();
 //     }
 // })
 
-
-// Пример данных (замени на реальные, если получаешь с API)
 const user = ref({
     name: '123',
     email: '123@example.com',
