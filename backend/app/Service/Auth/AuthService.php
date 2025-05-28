@@ -14,7 +14,7 @@ class AuthService
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return null;
         }
-
+        // доделать когда разберусь с токеном 
         return $user->createToken('auth_token', ['разрешение_на_просмотр'], now()->addWeek())->plainTextToken;
     }
     public function register(array $data){
