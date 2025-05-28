@@ -1,35 +1,34 @@
 <script setup>
 import {useUserStore} from "@/stores/useUserStore.js";
 import axios from "axios";
-import {computed, onMounted, ref} from "vue";
+import {onMounted, ref, computed} from "vue";
 
 const store = useUserStore();
-const userName = store.user?.name ?? null;
-
+const userName = computed(() => store.user?.name ?? null);
 
 const BASE_URL = 'http://localhost:8000';
-const fetchedArticles = ref([]);        // все посты
-const startPageHomeVue = ref(0);        // текущая страница 1 ? 0
-const allPageHomeVue = ref(null);      // последняя страница
-const isLoading = ref(true)
+const fetchedArticles = ref([]);
+const startPageHomeVue = ref(1);
+const allPageHomeVue = ref(null);
+const isLoading = ref(false);
+
 const fetchArticlesFn = async () => {
+
     try {
         isLoading.value = true;
-        const token =JSON.parse(localStorage.getItem('user')).token
+        const token = JSON.parse(localStorage.getItem('user'))?.token;
         const response = await axios.get(`${BASE_URL}/api/article?page=${startPageHomeVue.value}`, {
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-        })
+        });
         const data = response.data.article;
         fetchedArticles.value = data.data;
         startPageHomeVue.value = data.current_page;
         allPageHomeVue.value = data.last_page;
-        //console.log(data);
     } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        throw error;
+        console.error('Ошибка:', error);
     } finally {
         isLoading.value = false;
     }
@@ -37,39 +36,41 @@ const fetchArticlesFn = async () => {
 
 const nextPage = async (page) => {
     startPageHomeVue.value = page;
-    console.log(startPageHomeVue.value);
     await fetchArticlesFn();
 };
 
-
 onMounted(fetchArticlesFn);
-
 </script>
+
 <template>
     <div class="home-page">
-        <h1 class="main-title text-center">{{
+        <h1 class="main-title text-center">
+            {{
                 userName ? `${userName}, Добро пожаловать на главную страницу!` : 'Добро пожаловать!'
-            }}</h1>
-
-        <div class="container" v-if="!isLoading">
-            <div class="row row-cols-md-3  cards-wrapper ">
-                <div v-for="article in fetchedArticles" :key="article.id" class="mt-3">
-                    <div class="col h-100">
-                        <div class="card info-card card-hover">
-                            <div class="card-body">
-                                <img class="img-fluid":src="`${BASE_URL}/storage/${article.preview_image}`"alt="image" />
-                                <h3 class="card-title">{{ article.title }}</h3>
-                                <p class="card-text">{{ article.text }}</p>
-                                <p class="card-text">Дата создания : {{ article.created_at }}</p>
-                                <p class="card-text">owner id : {{ article.owner_id }}</p>
-                                <router-link :to="{ name: 'ArticleSinglePageView', params: { id: article.id } }" class="text-success">
-                                    Подробнее
-                                </router-link>
-                            </div>
+            }}
+        </h1>
+<!--        <div v-if="isLoading" class="text-center py-5 text-success">Загрузка...</div>-->
+        <div class="container">
+            <div class="row row-cols-md-3 cards-wrapper">
+                <div v-for="article in fetchedArticles" :key="article.id" class="mt-3 col">
+                    <div class="card info-card card-hover h-100">
+                        <div class="card-body">
+                            <img class="img-fluid"
+                                 :src="`${BASE_URL}/storage/${article.preview_image}`" alt="image"/>
+                            <h3 class="card-title">{{ article.title }}</h3>
+                            <p class="card-text">{{ article.text }}</p>
+                            <p class="card-text">Дата создания : {{ article.created_at }}</p>
+                            <p class="card-text">owner id : {{ article.owner_id }}</p>
+                            <router-link
+                                :to="{ name: 'ArticleSinglePageView', params: { id: article.id } }"
+                                class="text-success">
+                                Подробнее
+                            </router-link>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="mt-4 d-flex justify-content-center align-items-center">
                 <ul class="pagination">
                     <li
@@ -82,9 +83,6 @@ onMounted(fetchArticlesFn);
                     </li>
                 </ul>
             </div>
-        </div>
-        <div v-else class="container d-flex justify-content-center align-items-center">
-            загрузка...
         </div>
     </div>
 </template>

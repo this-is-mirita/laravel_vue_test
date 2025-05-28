@@ -31,7 +31,6 @@ async function logout() {
         userStore.clearUser();
         router.push('/login');
     } catch (error) {
-        //console.error('Ошибка при выходе:', error);
         toast.error('Ошибка при выходе');
     }
 }

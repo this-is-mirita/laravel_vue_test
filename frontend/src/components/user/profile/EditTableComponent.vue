@@ -32,11 +32,14 @@ const saveChanges = async () => {
         isLoading.value = false;
     }
 };
+const BASE_URL = 'http://localhost:8000';
 </script>
 
 <template>
     <td>{{ editedArticle.id }}</td>
-    <td><input v-model="editedArticle.preview_image" class="form-control form-control-sm shadow-sm" /></td>
+    <td>
+        <img class="img-fluid" :src="`${BASE_URL}/storage/${article.preview_image}`" alt="image"/>
+    </td>
     <td><input v-model="editedArticle.title" class="form-control form-control-sm shadow-sm" /></td>
     <td><input v-model="editedArticle.text" class="form-control form-control-sm shadow-sm" /></td>
     <td colspan="2">

@@ -1,8 +1,15 @@
 <script setup>
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
 import axios from 'axios';
 import router from "@/router/index.js";
-
+import {useUserStore} from "@/stores/useUserStore.js";
+const isLoggedIn = computed(() => useUserStore.isAuthenticated);
+// console.log(isLoggedIn.value); // фолс и идёт переадресация
+if (isLoggedIn.value) {
+    console.log('redirect / ');
+} else {
+    router.push('/login');
+}
 
 
 const title = ref('');
@@ -54,7 +61,6 @@ async function createPost() {
         alert(`Ошибка: ${error.response.data.message}`);
     }
 }
-
 function handlePreviewImageChange(event) {
     const file = event.target.files[0];
     previewImage.value = file;

@@ -1,10 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, computed} from 'vue'
 import axios from "axios";
 import {useUserStore} from "@/stores/useUserStore.js";
+import router from "@/router/index.js";
 const BASE_URL = 'http://localhost:8000';
-const userStore = useUserStore();
-
+const isLoggedIn = computed(() => useUserStore.isAuthenticated);
+// console.log(isLoggedIn.value); // фолс и идёт переадресация
+if (isLoggedIn.value) {
+    console.log('redirect / ');
+} else {
+    router.push('/login');
+}
 // onMounted(async () => {
 //     const token = localStorage.getItem('token') || '';
 //     const user_id = userStore.user.id;

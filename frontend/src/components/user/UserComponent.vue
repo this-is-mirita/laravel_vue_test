@@ -9,7 +9,7 @@ const user = userStore.user;
 const isLoggedIn = computed(() => userStore.isAuthenticated);
 // console.log(isLoggedIn.value); // фолс и идёт переадресация
 if (isLoggedIn.value) {
-    console.log('user is logged in');
+    console.log('redirect / ');
 } else {
     router.push('/login');
 }

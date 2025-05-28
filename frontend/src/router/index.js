@@ -7,7 +7,6 @@ import UserComponent from "@/components/user/UserComponent.vue";
 import ArticleUserView from "@/components/user/ArticleUserView.vue";
 import ArticleCreateComponent from "@/components/user/ArticleCreateComponent.vue";
 import ArticleSinglePageView from "@/components/ArticleSinglePageView.vue";
-import ArticleEditPageView from "@/components/user/ArticleEditPageView.vue";
 
 
 const router = createRouter({
@@ -21,19 +20,15 @@ const router = createRouter({
 
         {path: '/user', name: 'user', component: UserComponent}, // middleware
 
-        {path: '/user/article', name: 'userArticle', component: ArticleUserView}, // middleware
-        {path: '/user/article/create', name: 'userCreateArticle', component: ArticleCreateComponent}, // middleware
+        {path: '/user/article', name: 'userArticle', component: ArticleUserView}, //
+        {path: '/user/article/create', name: 'userCreateArticle', component: ArticleCreateComponent}, //
 
         {
             path: '/articles/:id',
             name: 'ArticleSinglePageView',
             component: ArticleSinglePageView,
         },
-        {
-            path: '/articles/edit/:id',
-            name: 'ArticleEditPageView.vue',
-            component: ArticleEditPageView,
-        },
+
     ],
 })
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Articles\CreateController;
+use App\Http\Controllers\Articles\DeleteController;
 use App\Http\Controllers\Articles\EditController;
 use App\Http\Controllers\Auth\LoginAuthController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -18,7 +19,7 @@ Route::post('/register', [RegisterAuthController::class, 'index']);
 Route::post('/logout', [LogoutController::class, 'index'])
     ->middleware('auth:sanctum');
 Route::get('/article', [IndexController::class, 'index'])
-    ->middleware('auth:sanctum');
+    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
 Route::get('/article/{id}', function (string $id) {
     return response()->json([
         'id' => $id,
@@ -32,6 +33,9 @@ Route::post('/article/', [StoreController::class, 'index'])
 Route::post('/article/create', [CreateController::class, 'index'])
     ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
 Route::post('/article/edit/{id}', [EditController::class, 'index'])
+    ->where('id', '[0-9]+')
+    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
+Route::delete('/article/{id}', [DeleteController::class, 'index'])
     ->where('id', '[0-9]+')
     ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class]);
 //Route::middleware('auth:sanctum')->group(function () {
